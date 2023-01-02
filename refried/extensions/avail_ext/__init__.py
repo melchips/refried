@@ -16,6 +16,7 @@ from beancount.query import query
 from fava.core.tree import Tree
 from fava.ext import FavaExtensionBase
 from fava.template_filters import cost_or_value
+from fava.context import g
 
 from refried import filter_postings, _reverse_parents
 
@@ -32,8 +33,8 @@ class AvailExt(FavaExtensionBase):  # pragma: no cover
     def make_table(self, period):
         """An account tree based on matching regex patterns."""
         root = [
-            self.ledger.all_root_account.get(self.ledger.options['name_income']),
-            self.ledger.all_root_account.get(self.ledger.options['name_expenses']),
+            self.ledger.all_root_account.get('Income'),
+            self.ledger.all_root_account.get('Expenses'),
         ]
 
         today = datetime.date.today()
@@ -62,8 +63,7 @@ class AvailExt(FavaExtensionBase):  # pragma: no cover
         self.midsrows = ddict(Inventory)
         self.vrows = ddict(Inventory)
         self.midvrows = ddict(Inventory)
-        #for entry, posting in filter_postings(self.ledger.entries):
-        for entry, posting in filter_postings(self.ledger.all_entries):
+        for entry, posting in filter_postings(g.ledger.all_entries):
             if entry.date >= self.period_end:
                 continue
             self.vrows[posting.account].add_position(posting)
