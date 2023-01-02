@@ -32,8 +32,8 @@ class AvailExt(FavaExtensionBase):  # pragma: no cover
     def make_table(self, period):
         """An account tree based on matching regex patterns."""
         root = [
-            self.ledger.all_root_account.get('Recettes'),
-            self.ledger.all_root_account.get('Depenses'),
+            self.ledger.all_root_account.get(self.ledger.options['name_income']),
+            self.ledger.all_root_account.get(self.ledger.options['name_expenses']),
         ]
 
         today = datetime.date.today()
@@ -62,7 +62,8 @@ class AvailExt(FavaExtensionBase):  # pragma: no cover
         self.midsrows = ddict(Inventory)
         self.vrows = ddict(Inventory)
         self.midvrows = ddict(Inventory)
-        for entry, posting in filter_postings(self.ledger.entries):
+        #for entry, posting in filter_postings(self.ledger.entries):
+        for entry, posting in filter_postings(self.ledger.all_entries):
             if entry.date >= self.period_end:
                 continue
             self.vrows[posting.account].add_position(posting)
